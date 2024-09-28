@@ -1,6 +1,4 @@
-﻿
-
-
+﻿namespace Star_wars_planets_stats.UserInteractions;
 
 public class PrintHeader : IPrintHeader
 {
@@ -12,10 +10,6 @@ public class PrintHeader : IPrintHeader
     public int Padding { get; set; }
 
     public ConsoleColor Color { get; init; }
-
-    public PrintHeader()
-    {
-    }
 
     public PrintHeader(string headerTitle, int width, ConsoleColor color)
     {
