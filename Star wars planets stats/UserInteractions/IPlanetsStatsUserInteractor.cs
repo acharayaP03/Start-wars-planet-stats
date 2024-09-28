@@ -1,4 +1,6 @@
-﻿public interface IPlanetsStatsUserInteractor
+﻿using Star_wars_planets_stats.Model;
+
+public interface IPlanetsStatsUserInteractor
 {
     void Show(IEnumerable<Planet> planets);
 

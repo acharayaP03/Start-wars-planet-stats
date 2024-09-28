@@ -1,4 +1,6 @@
-﻿public class PlanetStaticsAnalyzer : IPlanetStatisticsAnalyzer
+﻿using Star_wars_planets_stats.Model;
+
+public class PlanetStaticsAnalyzer : IPlanetStatisticsAnalyzer
 {
     private readonly IPlanetsStatsUserInteractor _planetsStatsUserInteractor;
 
@@ -10,7 +12,7 @@
     public void Analyze(IEnumerable<Planet> planets)
     {
 
-        var propertyNamesToSelectorMapping = new Dictionary<string, Func<Planet, int?>>
+        var propertyNamesToSelectorMapping = new Dictionary<string, Func<Planet, long?>>
         {
             { "population", planet => planet.Population },
             { "diameter", planet => planet.Diameter },
@@ -31,13 +33,13 @@
         }
     }
 
-    private static void ShowStatistics(IEnumerable<Planet> planets, string propertyName, Func<Planet, int?> propertySelector)
+    private static void ShowStatistics(IEnumerable<Planet> planets, string propertyName, Func<Planet, long?> propertySelector)
     {
         ShowStatistics("Max", planets.MaxBy(propertySelector), propertyName, propertySelector);
         ShowStatistics("Min", planets.MinBy(propertySelector), propertyName, propertySelector);
     }
 
-    private static void ShowStatistics(string description, Planet selectedPlanet, string propertyName, Func<Planet, int?> propertySelector)
+    private static void ShowStatistics(string description, Planet selectedPlanet, string propertyName, Func<Planet, long?> propertySelector)
     {
         Console.WriteLine($"{description} {propertyName}  is: {propertySelector(selectedPlanet)} (planet: {selectedPlanet.Name})");
     }

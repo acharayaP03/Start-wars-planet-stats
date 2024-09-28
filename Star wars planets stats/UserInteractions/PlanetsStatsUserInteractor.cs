@@ -1,4 +1,6 @@
-﻿namespace Star_wars_planets_stats.UserInteractions;
+﻿using Star_wars_planets_stats.Model;
+
+namespace Star_wars_planets_stats.UserInteractions;
 
 public class PlanetsStatsUserInteractor : IPlanetsStatsUserInteractor
 {
@@ -9,7 +11,7 @@ public class PlanetsStatsUserInteractor : IPlanetsStatsUserInteractor
         _userInteractor = userInteractor;
     }
 
-    string? IPlanetsStatsUserInteractor.ChooseStaticticsToDisplay(IEnumerable<string> propertiesThatCanBeChosen)
+    public string? ChooseStaticticsToDisplay(IEnumerable<string> propertiesThatCanBeChosen)
     {
         _userInteractor.ShowMessage(Environment.NewLine);
         _userInteractor.ShowMessage("The statistics fo which property would you like to see?. ");
@@ -18,13 +20,49 @@ public class PlanetsStatsUserInteractor : IPlanetsStatsUserInteractor
         return _userInteractor.ReadFromUser();
     }
 
-    void IPlanetsStatsUserInteractor.Show(IEnumerable<Planet> planets)
+    public void Show(IEnumerable<Planet> planets)
     {
-        Console.WriteLine("Planets:" + planets);
+        //foreach (var planet in planets)
+        //{
+        //    _userInteractor.ShowMessage(planet.ToString());
+        //}
+
+        TablePrinter.Print(planets);    
     }
 
-    void IPlanetsStatsUserInteractor.ShowMessage(string message)
+    public void ShowMessage(string message)
     {
         _userInteractor.ShowMessage(message);
+    }
+}
+
+public static class TablePrinter
+{
+
+   public static void Print<T>(IEnumerable<T> items)
+    {
+        const int columnWidth = 15;
+        var properties = typeof(T).GetProperties();
+
+        foreach(var property in properties)
+        {
+            //Console.Write($"{property.Name}|");
+            Console.Write($"{{0,-{columnWidth}}}|", property.Name);
+
+        }
+        Console.WriteLine();
+        Console.WriteLine(new string('-', columnWidth * properties.Length));
+
+
+
+        foreach (var item in items)
+        {
+            foreach (var property in properties)
+            {
+                Console.Write($"{{0, -{columnWidth}}}", property.GetValue(item));
+            }
+            Console.WriteLine();
+        }
+
     }
 }

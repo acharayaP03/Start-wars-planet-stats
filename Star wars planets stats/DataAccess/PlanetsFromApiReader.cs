@@ -1,4 +1,5 @@
 ﻿using Star_wars_planets_stats.DTOs;
+using Star_wars_planets_stats.Model;
 using Star_wars_planets_stats.UserInteractions;
 using System.Text.Json;
 
