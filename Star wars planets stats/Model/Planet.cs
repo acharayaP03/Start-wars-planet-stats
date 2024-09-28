@@ -1,20 +1,22 @@
 ﻿using Star_wars_planets_stats.DTOs;
 using Star_wars_planets_stats.Utilities;
 
-public readonly record struct Planet
+namespace Star_wars_planets_stats.Model;
+
+public readonly record struct Planet : IPlanet
 {
     public string Name { get; }
 
     public int Diameter { get; }
 
-    public int? Population { get; }
+    public long? Population { get; }
 
     public int? SurfaceWater { get; }
 
-    public Planet(string name, int diameter, int? population, int? surfaceWater)
+    public Planet(string name, int diameter, long? population, int? surfaceWater)
     {
 
-        if(name is null)
+        if (name is null)
         {
             throw new ArgumentNullException(nameof(name));
         }
@@ -30,7 +32,7 @@ public readonly record struct Planet
         var name = planetDto.name;
         var diameter = int.Parse(planetDto.diameter);
 
-        int? population = planetDto.population.ToIntOrNull();
+        long? population = planetDto.population.ToLongOrNull();
 
         int? surfaceWater = planetDto.surface_water.ToIntOrNull();
 
@@ -38,4 +40,3 @@ public readonly record struct Planet
 
     }
 }
-
