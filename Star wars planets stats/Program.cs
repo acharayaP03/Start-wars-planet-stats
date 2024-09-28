@@ -78,28 +78,16 @@ public class StarWarsPlanetStats
 
         if (userChoice!.ToLower() == "population")
         {
-            var planetWithMaxPopulation = planets.MaxBy( planet => planet.Population );
-            Console.WriteLine($"Max population is: {planetWithMaxPopulation.Population} (planet: {planetWithMaxPopulation.Name})");
-
-            var planetWithMinPopulation = planets.MinBy(planet => planet.Population );
-            Console.WriteLine($"Min population is :{planetWithMinPopulation.Population} (planet: { planetWithMinPopulation.Name})");
+            ShowStatistics(planets, "population", planet => planet.Population);
         }
 
         else if (userChoice!.ToLower() == "diameter")
         {
-            var planetWithMaxDiameter = planets.MaxBy(planet => planet.Population);
-            Console.WriteLine($"Max diameter is: {planetWithMaxDiameter.Diameter} (planet: {planetWithMaxDiameter.Name})");
-
-            var planetWithMinDiameter = planets.MinBy(planet => planet.Diameter);
-            Console.WriteLine($"Min diameter is :{planetWithMinDiameter.Diameter} (planet: {planetWithMinDiameter.Name})");
+            ShowStatistics(planets, "diameter", planet => planet.Diameter);
         }
         else if (userChoice!.ToLower() == "surface")
         {
-            var planetWithMaxSurfaceWater = planets.MaxBy(planet => planet.SurfaceWater);
-            Console.WriteLine($"Max surface water is: {planetWithMaxSurfaceWater.Diameter} (planet: {planetWithMaxSurfaceWater.Name})");
-
-            var planetWithMinSurfaceWatern = planets.MinBy(planet => planet.SurfaceWater);
-            Console.WriteLine($"Min surface water is :{planetWithMinSurfaceWatern.SurfaceWater} (planet: {planetWithMinSurfaceWatern.Name})");
+            ShowStatistics(planets, "surface water", planet => planet.SurfaceWater);
         }
         else
         {
@@ -124,6 +112,15 @@ public class StarWarsPlanetStats
                 planets.Add(planet);
         }
         return planets;
+    }
+
+    private void ShowStatistics(IEnumerable<Planet> planets, string propertyName, Func<Planet, int?> propertySelector)
+    {
+        var planetWithMaxPropertyValue = planets.MaxBy(propertySelector);
+        Console.WriteLine($"Max {propertyName}  is: {propertySelector(planetWithMaxPropertyValue)} (planet: {propertySelector(planetWithMaxPropertyValue)})");
+
+        var planetWithMinPropertyValue = planets.MinBy(propertySelector);
+        Console.WriteLine($"Min {propertyName} is :{propertySelector(planetWithMinPropertyValue)} (planet: {propertySelector(planetWithMinPropertyValue)})");
     }
 }
 
