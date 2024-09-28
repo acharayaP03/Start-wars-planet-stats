@@ -53,10 +53,7 @@ public class StarWarsPlanetStats
             return;
         }
 
-        if (json is null)
-        {
-            json = await _secondaryApiDataReader.Read("https://swapi.dev/", "api/planets");
-        }
+        json ??= await _secondaryApiDataReader.Read("https://swapi.dev/", "api/planets");
 
         var root = JsonSerializer.Deserialize<Root>(json);
 
@@ -66,32 +63,30 @@ public class StarWarsPlanetStats
         {
             Console.WriteLine(planet);
         }
+
+        var propertyNamesToSelectorMapping = new Dictionary<string, Func<Planet, int?>>
+        {
+            { "population", planet => planet.Population },
+            { "diameter", planet => planet.Diameter },
+            { "surface", planet => planet.SurfaceWater }
+        };
+
+
         Console.WriteLine();
         Console.WriteLine("The statistics fo which property would you like to see?. ");
-        Console.WriteLine("population");
-        Console.WriteLine("diameter");
-        Console.WriteLine("surface");
-        Console.WriteLine();
+
+        Console.WriteLine(string.Join(Environment.NewLine, propertyNamesToSelectorMapping.Keys));
 
 
         var userChoice = Console.ReadLine();
 
-        if (userChoice!.ToLower() == "population")
+        if(userChoice is null || !propertyNamesToSelectorMapping.ContainsKey(userChoice.ToLower()))
         {
-            ShowStatistics(planets, "population", planet => planet.Population);
-        }
-
-        else if (userChoice!.ToLower() == "diameter")
-        {
-            ShowStatistics(planets, "diameter", planet => planet.Diameter);
-        }
-        else if (userChoice!.ToLower() == "surface")
-        {
-            ShowStatistics(planets, "surface water", planet => planet.SurfaceWater);
+            Console.WriteLine("Invalid choice please try again.");
         }
         else
         {
-            Console.WriteLine("Invalid choice please try again.");
+            ShowStatistics(planets, userChoice, propertyNamesToSelectorMapping[userChoice.ToLower()]);
         }
     }
 
@@ -101,26 +96,19 @@ public class StarWarsPlanetStats
         {
             throw new ArgumentNullException(nameof(root));
         }
-       
-
-        var planets = new List<Planet>();
-
-        foreach (var planetDto in root.results)
-        {
-            Planet planet = (Planet)planetDto;
-
-                planets.Add(planet);
-        }
-        return planets;
+        
+        return root.results.Select(planetDto => (Planet)planetDto);
     }
 
-    private void ShowStatistics(IEnumerable<Planet> planets, string propertyName, Func<Planet, int?> propertySelector)
+    private static void ShowStatistics(IEnumerable<Planet> planets, string propertyName, Func<Planet, int?> propertySelector)
     {
-        var planetWithMaxPropertyValue = planets.MaxBy(propertySelector);
-        Console.WriteLine($"Max {propertyName}  is: {propertySelector(planetWithMaxPropertyValue)} (planet: {propertySelector(planetWithMaxPropertyValue)})");
+        ShowStatistics("Max", planets.MaxBy(propertySelector), propertyName, propertySelector);
+        ShowStatistics("Min", planets.MinBy(propertySelector), propertyName, propertySelector);
+    }
 
-        var planetWithMinPropertyValue = planets.MinBy(propertySelector);
-        Console.WriteLine($"Min {propertyName} is :{propertySelector(planetWithMinPropertyValue)} (planet: {propertySelector(planetWithMinPropertyValue)})");
+    private static void ShowStatistics(string description, Planet selectedPlanet, string propertyName, Func<Planet, int?> propertySelector)
+    {
+        Console.WriteLine($"{description} {propertyName}  is: {propertySelector(selectedPlanet)} (planet: {selectedPlanet.Name})");
     }
 }
 
@@ -166,11 +154,6 @@ public static class StringExtensions
 {
     public static int? ToIntOrNull(this string? value)
     {
-        int? result = null;
-        if (int.TryParse(value, out int parsedResult))
-        {
-            result = parsedResult;
-        }
-        return result;
+        return int.TryParse(value, out int parsedResult) ? parsedResult : null;
     }
 }
